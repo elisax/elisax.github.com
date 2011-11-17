@@ -4,17 +4,13 @@
 <script type="text/javascript" src="jquery.query-2.1.7.js"></script>
 <script type="text/javascript">
 
-//if(document.referrer.match(/edirectdebit\.com/i))
-
-	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-16009424-1']);
 	_gaq.push(['_addTrans',
 	    $.query.get('reference'),           // order ID - required
 	    'edirectdebit',             		// affiliation or store name
 	    $.query.get('ddamount'),			// total - required
 	    '',                         		// tax
 	    '',                         		// shipping
-	    $.query.get('fullname'),             // city
+	    $.query.get('fullname'),            // city
 	    '',               					// state or province
 	    $.query.get('email')                // country
 	]);
@@ -28,6 +24,11 @@
 	]);
 	_gaq.push(['_trackTrans']);
 
+
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-16009424-1']);
+	_gaq.push(['_trackPageview']);
+	
 	(function() {
 	  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 	  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
