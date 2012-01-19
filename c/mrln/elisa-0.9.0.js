@@ -18,7 +18,7 @@ $(document).ready( function(){
                 trackSocial:      		true,   
                 
                 regexFileTypes:         /^.+\.(doc|docx|xls|xlsx|ppt|pptx|zip|pdf)$/i, 
-                regexInternalTraffic:   /(elisa-dbi\.co\.uk)/i, 
+                regexInternalTraffic:   /(merlin\.org\.uk)/i, 
                 regexRSSLinks:          /(\/feed)/i,
                 
                 prefixFileDownload: 	'File Download',
@@ -61,12 +61,21 @@ $(document).ready( function(){
                 
                     var href = $(this).attr('href');
 					var text = $(this).text()	    
-                
-                    // Track exit links
-                    if (opt.trackExitLinks && href.match(/^https?\:/) && !href.match(opt.regexInternalTraffic))
+
+                    // START CUSTOM CODE
+                    // Track youtube links
+                    if (opt.trackExitLinks && href.match(/youtube.com\/watch/) )
                     {
                         //alert('exit -> '+href);
-                        //elisa.trackPageView( this, opt.prefixExitLink + href.replace(/^https?\:\/\//i, '') );
+						elisa.trackEvent( this, 'Videos', $(this).attr('title'), href.replace(/^https?\:\/\//i, '') );
+                        return;
+                    }
+                    // END CUSTOM CODE
+                
+                    // Track exit links
+                    else if (opt.trackExitLinks && href.match(/^https?\:/) && !href.match(opt.regexInternalTraffic))
+                    {
+                        //alert('exit -> '+href);
 						elisa.trackEvent( this, opt.prefixExitLink, href.replace(/^https?\:\/\//i, ''), text );
                         return;
                     }
@@ -75,7 +84,6 @@ $(document).ready( function(){
                     else if (opt.trackEmailLinks && href.match(/^mailto\:/i))
                     {     
                         //alert('mail -> '+href);
-                        //elisa.trackPageView( this, opt.prefixEmailLink + href.replace(/^mailto\:/i, '') );
 						elisa.trackEvent( this, opt.prefixEmailLink, href.replace(/^mailto\:/i, ''), text );	
                         return;
                     }
@@ -84,7 +92,6 @@ $(document).ready( function(){
                     else if (opt.trackFileDownloads && href.match(opt.regexFileTypes))
                     {     
                         //alert($(this).text());   
-                        //elisa.trackPageView( this,  opt.prefixFileDownload + href.replace(/^https?\:\/\//i,'') + ' ('+$(this).text()+')');
                 		elisa.trackEvent( this, opt.prefixFileDownload, href.replace(/^https?\:\/\//i,''), text );
                         return;
                     }
@@ -93,7 +100,6 @@ $(document).ready( function(){
                     else if (opt.trackRSSLinks && href.match(opt.regexRSSLinks))
                     {     
                         //alert(href.match(opt.regexRSSLinks));   
-                        //elisa.trackPageView( this,  opt.prefixRSSLink + href.replace(/^https?\:\/\//i,'') );
                 		elisa.trackEvent( this, opt.prefixRSSLink, href.replace(/^https?\:\/\//i,''), text );
                         return;
                     }
