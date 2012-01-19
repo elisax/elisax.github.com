@@ -1,6 +1,13 @@
 $(document).ready( function(){
-       
+    
     $().elisa();
+        
+    // if regular donation selected then pass cookies by post to edirectdebit.com
+    $('#webform-client-form-20').submit(function(){
+        if($('input[value=regular]:radio').is(':checked')){
+            _gaq.push(['_linkByPost',this]);
+        }
+    });
     
 });
 
@@ -162,10 +169,7 @@ $(document).ready( function(){
                     if (elisa.options.isAsync) { 
 						//alert(pageUrl);
 						_gaq.push(['_trackEvent', category, action, title]);
-						//_gaq.push(['_trackPageview', pageUrl]);
                     }
-                
-                    //if (!elisa.options.isAsync) pageTracker._trackPageview(pageUrl);
                 });
             }
             
