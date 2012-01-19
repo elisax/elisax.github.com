@@ -117,13 +117,11 @@ $(document).ready( function(){
             
             trackSocialFacebook: function( event, action, opt_pageUrl ) {
           
-                if (FB && FB.Event && FB.Event.subscribe) {
+                if (typeof FB === 'undefined') return;
                 
-                	FB.Event.subscribe(event, function(targetUrl) {
-                    	_gaq.push(['_trackSocial', 'Facebook', action, targetUrl, opt_pageUrl]);
-                	});
-				}
-                 
+            	FB.Event.subscribe(event, function(targetUrl) {
+                	_gaq.push(['_trackSocial', 'Facebook', action, targetUrl, opt_pageUrl]);
+            	}); 
             },
 
 			trackSocialTwitter: function() {
