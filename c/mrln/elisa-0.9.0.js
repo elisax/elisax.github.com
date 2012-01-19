@@ -25,7 +25,7 @@ $(document).ready( function(){
                 trackSocial:      		true,   
                 
                 regexFileTypes:         /^.+\.(doc|docx|xls|xlsx|ppt|pptx|zip|pdf)$/i, 
-                regexInternalTraffic:   /(merlin\.org\.uk)/i, 
+                regexInternalTraffic:   /(\.merlin\.org\.uk)/i, 
                 regexRSSLinks:          /(\/feed)/i,
                 
                 prefixFileDownload: 	'File Download',
