@@ -128,6 +128,8 @@ $(document).ready( function(){
 
 			trackSocialTwitter: function() {
 				
+				if (typeof twttr === 'undefined') return;
+				
 				twttr.events.bind('tweet', function(event) {
 				  if (event) {
 				    var targetUrl;
