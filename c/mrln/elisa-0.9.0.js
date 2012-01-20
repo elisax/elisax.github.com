@@ -2,11 +2,16 @@ $(document).ready( function(){
     
     $().elisa();
         
-    // if regular donation selected then pass cookies by post to edirectdebit.com
+    // track give now button 
     $('#webform-client-form-20').submit(function(){
         if($('input[value=regular]:radio').is(':checked')){
-            _gaq.push(['_linkByPost',this]);
-        }
+            //_gaq.push(['_linkByPost',this]);
+            _gaq.push(['_trackEvent', 'Give Now Button', 'Regular']);
+        }else if($('input[value=single]:radio').is(':checked')){  
+            _gaq.push(['_trackEvent', 'Give Now Button', 'Single']);
+        } 
+            
+        
     });
     
 });
