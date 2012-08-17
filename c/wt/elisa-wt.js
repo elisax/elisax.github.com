@@ -17,13 +17,13 @@ $(document).ready( function(){
 
             options: {
                 trackFileDownloads: 	true,
-                trackExitLinks:     	false,
+                trackExitLinks:     	true,
                 trackRSSLinks:      	false,
                 trackEmailLinks:    	true,
                 trackSocial:      		true,   
                 
+                regexInternalTraffic:   new RegExp(window.location.host, 'i'),
                 regexFileTypes:         /^.+\.(doc|docx|xls|xlsx|ppt|pptx|zip|pdf)$/i, 
-                regexInternalTraffic:   /(\.woodlandtrust\.org\.uk)/i, 
                 regexRSSLinks:          /(\/feed)/i,
                 
                 prefixFileDownload: 	'File Download',
@@ -33,22 +33,17 @@ $(document).ready( function(){
                 
                 isAsync: true
             },
-        
-              
-            pageTrackerFound: false,        
-            host: window.location.host.toLowerCase(),
 
             init: function( optionOverrides ) {
+                
+                console.log(this.options.regexInternalTraffic);
                 
                 if(optionOverrides)
                     $.extend( this.options, optionOverrides );
                 
                 if( typeof( _gaq ) == 'undefined' && this.options.isAsync ) return;
                 if( typeof( pageTracker ) == 'undefined' && !this.options.isAsync ) return;
-                pageTrackerFound = true;
                 
-				
-				
                 this.processPageLinks( this.options );
                 
                 if( this.options.trackSocial) {
@@ -149,15 +144,13 @@ $(document).ready( function(){
 			  }
 			},
             
-            trackEvent: function(link, category, action, title) {
-                
-                if(!pageTrackerFound) return;
+            trackEvent: function(link, category, action, label) {
                 
                 $(link).click(function() {
                     
                     if (elisa.options.isAsync) { 
-						//alert(link);
-						_gaq.push(['_trackEvent', category, action, title]);
+						alert(link);
+						_gaq.push(['_trackEvent', category, action, label]);
                     }
                 });
             }
