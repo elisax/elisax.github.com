@@ -22,19 +22,16 @@ $(document).ready( function(){
             options: {
                 trackFileDownloads: 	true,
                 trackExitLinks:     	true,
-                trackRSSLinks:      	true,
                 trackEmailLinks:    	true,
                 trackSocial:      		true,
                 trackCrossDomains:      true,
                 
                 regexInternalTraffic:   new RegExp(window.location.host, 'i'),                                
                 regexFileTypes:         /^.+\.(doc|docx|xls|xlsx|ppt|pptx|zip|pdf)$/i, 
-                regexRSSLinks:          /(\/feed)/i,
                 regexCrossDomains:  /ancient-tree-hunt\.org\.uk|backonthemap\.org\.uk|british-trees\.com|dedicatetrees\.com|naturedetectives\.org\.uk|naturescalendar\.org\.uk|visitwoods\.org\.uk|woodlandtrust\.org\.uk|woodlandtrustshop\.com|wt-store\.com|woodland-trust\.org\.uk/i,
                 
                 prefixFileDownload: 	'File Download',
                 prefixExitLink:     	'Exit Links',
-                prefixRSSLink:      	'Rss Links',
                 prefixEmailLink:    	'Email Links',
                 
                 isAsync: true
@@ -68,20 +65,24 @@ $(document).ready( function(){
                 
                     var href = $(this).attr('href');
 					var text = $(this).text();
-                                
-                    // Track cross domain
-                    if (opt.trackCrossDomains && href.match(/^https?\:/i) && href.match(opt.regexCrossDomains))
-                    //if (opt.trackCrossDomains && href.match(/file?\:/i) && href.match(opt.regexCrossDomains))
-                    {     
-						elisa.trackCrossDomain( this );	
-                        return;
-                    }
+					
                     
-                    // Track exit links
-                    else if (opt.trackExitLinks && href.match(/^https?\:/i) && !href.match(opt.regexInternalTraffic))
+                    if (href.match(/^https?\:/i) && !href.match(opt.regexInternalTraffic) )
                     {
-						elisa.trackEvent( this, opt.prefixExitLink, href.replace(/^https?\:\/\//i, ''), text );
-                        return;
+                        // Track cross domain
+                        if(opt.trackCrossDomains && href.match(opt.regexCrossDomains) ) 
+                        {
+                            elisa.trackCrossDomain( this );	
+                            return;
+                        }
+                        
+                        // Track exit links
+                        else if(opt.trackExitLinks) 
+                        {
+                            elisa.trackEvent( this, opt.prefixExitLink, href.replace(/^https?\:\/\//i, ''), text );
+                            return;   
+                        }
+                        
                     }
                     
                     // Track email links
@@ -98,12 +99,6 @@ $(document).ready( function(){
                         return;
                     }
                     
-                    // Track rss links
-                    else if (opt.trackRSSLinks && href.match(opt.regexRSSLinks))
-                    {        
-                		elisa.trackEvent( this, opt.prefixRSSLink, href.replace(/^https?\:\/\//i,''), text );
-                        return;
-                    }
                     
                 });
             
@@ -116,7 +111,7 @@ $(document).ready( function(){
                     var action = $(this).attr('action');
 
                     // Track cross domain
-                    if (opt.trackCrossDomains && action.match(/^https?\:/i) && action.match(opt.regexCrossDomains))
+                    if (opt.trackCrossDomains && action.match(/^https?\:/i) && action.match(opt.regexCrossDomains) && !action.match(opt.regexInternalTraffic) )
                     {     
     					elisa.trackCrossDomain( this );	
                         return;
