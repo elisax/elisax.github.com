@@ -2,10 +2,14 @@
 * Elisa JS version 0.9
 * The Woodland Trust
 */
+ 
 
 $(document).ready( function(){
     
     $().elisa();
+    
+    // Set bounce rate timeout
+    setTimeout("_gaq.push(['_trackEvent', 'Bounce Rate Timeout', '15 seconds'])", 15000);
     
 });
 
@@ -18,13 +22,15 @@ $(document).ready( function(){
             options: {
                 trackFileDownloads: 	true,
                 trackExitLinks:     	true,
-                trackRSSLinks:      	false,
+                trackRSSLinks:      	true,
                 trackEmailLinks:    	true,
-                trackSocial:      		true,   
+                trackSocial:      		true,
+                trackCrossDomains:      true,
                 
-                regexInternalTraffic:   new RegExp(window.location.host, 'i'),
+                regexInternalTraffic:   new RegExp(window.location.host, 'i'),                                
                 regexFileTypes:         /^.+\.(doc|docx|xls|xlsx|ppt|pptx|zip|pdf)$/i, 
                 regexRSSLinks:          /(\/feed)/i,
+                regexCrossDomains:  /ancient-tree-hunt\.org\.uk|backonthemap\.org\.uk|british-trees\.com|dedicatetrees\.com|naturedetectives\.org\.uk|naturescalendar\.org\.uk|visitwoods\.org\.uk|woodlandtrust\.org\.uk|woodlandtrustshop\.com|wt-store\.com|woodland-trust\.org\.uk/i,
                 
                 prefixFileDownload: 	'File Download',
                 prefixExitLink:     	'Exit Links',
@@ -36,15 +42,13 @@ $(document).ready( function(){
 
             init: function( optionOverrides ) {
                 
-                console.log(this.options.regexInternalTraffic);
-                
-                if(optionOverrides)
-                    $.extend( this.options, optionOverrides );
+                if(optionOverrides) $.extend( this.options, optionOverrides );
                 
                 if( typeof( _gaq ) == 'undefined' && this.options.isAsync ) return;
                 if( typeof( pageTracker ) == 'undefined' && !this.options.isAsync ) return;
                 
                 this.processPageLinks( this.options );
+                this.processPageForms( this.options );
                 
                 if( this.options.trackSocial) {
 					this.trackSocialTwitter();
@@ -54,7 +58,9 @@ $(document).ready( function(){
                     this.trackSocialFacebook('message.send', 'Share');
                 }	
                 
-            },    
+            },
+            
+            /* PROCESS PAGE FUNCTIONS */
             
             processPageLinks: function( opt ) {
             
@@ -62,42 +68,66 @@ $(document).ready( function(){
                 
                     var href = $(this).attr('href');
 					var text = $(this).text();
-                
+                                
+                    // Track cross domain
+                    if (opt.trackCrossDomains && href.match(/^https?\:/i) && href.match(opt.regexCrossDomains))
+                    //if (opt.trackCrossDomains && href.match(/file?\:/i) && href.match(opt.regexCrossDomains))
+                    {     
+						elisa.trackCrossDomain( this );	
+                        return;
+                    }
+                    
                     // Track exit links
-                    if (opt.trackExitLinks && href.match(/^https?\:/) && !href.match(opt.regexInternalTraffic))
+                    else if (opt.trackExitLinks && href.match(/^https?\:/i) && !href.match(opt.regexInternalTraffic))
                     {
-                        //alert('exit -> '+href);
 						elisa.trackEvent( this, opt.prefixExitLink, href.replace(/^https?\:\/\//i, ''), text );
                         return;
                     }
                     
-                    // Track email links - mailto
+                    // Track email links
                     else if (opt.trackEmailLinks && href.match(/^mailto\:/i))
                     {     
-                        //alert('mail -> '+href);
 						elisa.trackEvent( this, opt.prefixEmailLink, href.replace(/^mailto\:/i, ''), text );	
                         return;
                     }
                     
                     // Track file downloads
                     else if (opt.trackFileDownloads && href.match(opt.regexFileTypes))
-                    {     
-                        //alert($(this).text());   
+                    {       
                 		elisa.trackEvent( this, opt.prefixFileDownload, href.replace(/^https?\:\/\//i,''), text );
                         return;
                     }
                     
                     // Track rss links
                     else if (opt.trackRSSLinks && href.match(opt.regexRSSLinks))
-                    {     
-                        //alert(href.match(opt.regexRSSLinks));   
+                    {        
                 		elisa.trackEvent( this, opt.prefixRSSLink, href.replace(/^https?\:\/\//i,''), text );
                         return;
                     }
                     
-                } );
+                });
             
             },
+            
+            processPageForms: function( opt ) {
+                
+                $('form').each( function() {
+                 
+                    var action = $(this).attr('action');
+
+                    // Track cross domain
+                    if (opt.trackCrossDomains && action.match(/^https?\:/i) && action.match(opt.regexCrossDomains))
+                    {     
+    					elisa.trackCrossDomain( this );	
+                        return;
+                    }
+                    
+                });
+    
+            },
+            
+            
+            /* TRACK FUNCTIONS */
             
             trackSocialFacebook: function( event, action, opt_pageUrl ) {
           
@@ -127,14 +157,12 @@ $(document).ready( function(){
 			  if (!uri) {
 			    return;
 			  }
-			  var uri = uri.split('#')[0];  // Remove anchor.
-			  var parts = uri.split('?');  // Check for query params.
+			  var uri = uri.split('#')[0];
+			  var parts = uri.split('?');
 			  if (parts.length == 1) {
 			    return;
 			  }
 			  var query = decodeURI(parts[1]);
-
-			  // Find url param.
 			  paramName += '=';
 			  var params = query.split('&');
 			  for (var i = 0, param; param = params[i]; ++i) {
@@ -149,11 +177,40 @@ $(document).ready( function(){
                 $(link).click(function() {
                     
                     if (elisa.options.isAsync) { 
-						alert(link);
+                        
+						//console.log('TRACK EVENT: '+category+' '+link);
 						_gaq.push(['_trackEvent', category, action, label]);
                     }
                 });
-            }
+            },
+            
+            trackCrossDomain: function(obj) {
+                
+                // Track Links
+                if(typeof obj.href !== 'undefined') {
+                    
+                    $(obj).click(function(e) {
+
+                        //console.log('CROSS DOMAIN LINK: '+obj.href);
+                        _gaq.push(['_link', obj.href]);
+                        return false;
+
+                    });
+                    
+                } 
+                
+                // Track Forms (works only when method = post)
+                else if(typeof obj.action !== 'undefined') {
+                
+                    $(obj).submit(function() {
+                    
+                        //console.log('CROSS DOMAIN FORM: '+obj.action);
+                        _gaq.push(['_linkByPost', obj]);
+                
+                    });
+                }
+
+            },
             
         };
         elisa.init(options,this);
