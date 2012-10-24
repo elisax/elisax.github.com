@@ -7,6 +7,7 @@ $(document).ready( function(){
     
     $().elisa();
     
+    
     // Set bounce rate timeout
     setTimeout("_gaq.push(['_trackEvent', 'Bounce Rate Timeout', '15 seconds'])", 15000);
     
