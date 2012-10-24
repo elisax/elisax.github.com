@@ -2,7 +2,6 @@
 * Elisa JS version 0.9
 * The Woodland Trust
 */
-alert('Hi')
 
 $(document).ready( function(){
     
