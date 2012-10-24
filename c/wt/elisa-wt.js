@@ -2,6 +2,7 @@
 * Elisa JS version 0.9
 * The Woodland Trust
 */
+alert('Hi')
 
 $(document).ready( function(){
     
@@ -12,42 +13,37 @@ $(document).ready( function(){
     setTimeout("_gaq.push(['_trackEvent', 'Bounce Rate Timeout', '15 seconds'])", 15000);
     
     // Count user registrations on woodlandtruts.org.uk
-    if(document.referrer.match(/registration.woodland-trust.org.uk/i) && $('#ctl00_welcomeMessage').length > 0 )
+    if(document.referrer.match(/registration\.woodland-trust\.org\.uk/i) && $('#ctl00_welcomeMessage').length > 0 )
     {
-	    console.log('registered');
-	    _gaq.push(['_trackEvent', 'Users', 'woodlandtruts.org.uk user registration']);
+	    _gaq.push(['_trackEvent', 'Users', 'woodlandtrust.org.uk user registration']);
     }
     
-	// Count user registrations on woodlandtrustshop.com/register.aspx
-	if(  window.location.href.match(/woodlandtrustshop.com\/register.aspx/i) )
-    {   
-    	$('#ctl00_ctl00_cph1_cph1_ctrlCustomerRegister_CreateUserForm').bind('DOMNodeInserted', function(objEvent) 
-    	{
-    		if ($('#ctl00_ctl00_cph1_cph1_ctrlCustomerRegister_CreateUserForm_CompleteStepContainer_lblCompleteStep').length > 0)
-    		{
-	    		console.log('registered shop');
-	    		_gaq.push(['_trackEvent', 'Users', 'woodlandtrustshop.com user registration']);
-	    	}
-	    });
+    // Count user registrations on woodlandtrustshop.com/register.aspx
+    if(  window.location.href.match(/woodlandtrustshop\.com\/register\.aspx/i) )
+    {
+    	if ($('div .section-body p span').text() == 'Your registration completed')
+    	    {
+		_gaq.push(['_trackEvent', 'Users', 'woodlandtrustshop.com user registration']);
+	    }
     }
     
     // Search results on visitwoods.org.uk
-    if(  window.location.href.match(/visitwoods.org.uk\/en\/visit-woods\/pages\/search-result.aspx/i) )
+    if(  window.location.href.match(/visitwoods\.org\.uk\/en\/visit-woods\/pages\/search-result\.aspx/i) )
     {	
-    	text = $('#tableResults .search-info').text();
+	text = $('#tableResults .search-info').text();
     	if(text.match(/Your search did not return any results|Your search returned 0 woods/))
     		result = '0';
     	else
     		result = text.match(/[0-9]+/).toString();
     		
-	    _gaq.push(['_trackEvent', 'Visit Woods: Search', $('#ctl00_ctl21_searchText').val(), result]);
+	    _gaq.push(['_trackEvent', 'Visit Woods: Search', $('span input.autoselect').val(), result]);
     }
     
     // Visit Woods - upload image
     $('.image-metadata-panel input[name="saveImages"]').click(function(e)
     {
         text = $('.image-metadata-panel h2').text();
-	    text = text.slice(text.indexOf('to ')+3,text.indexOf(',')).toString();
+	text = text.slice(text.indexOf('to ')+3,text.indexOf(',')).toString();
         _gaq.push(['_trackEvent', 'Visit Woods', 'Upload Image', text]);
     });
 
@@ -230,9 +226,7 @@ $(document).ready( function(){
                 $(link).click(function() {
                     
                     if (elisa.options.isAsync) { 
-                        
-						//console.log('TRACK EVENT: '+category+' '+link);
-						_gaq.push(['_trackEvent', category, action, label]);
+                        _gaq.push(['_trackEvent', category, action, label]);
                     }
                 });
             },
@@ -244,7 +238,6 @@ $(document).ready( function(){
                     
                     $(obj).click(function(e) {
 
-                        //console.log('CROSS DOMAIN LINK: '+obj.href);
                         _gaq.push(['_link', obj.href]);
                         return false;
 
@@ -257,7 +250,6 @@ $(document).ready( function(){
                 
                     $(obj).submit(function() {
                     
-                        //console.log('CROSS DOMAIN FORM: '+obj.action);
                         _gaq.push(['_linkByPost', obj]);
                 
                     });
