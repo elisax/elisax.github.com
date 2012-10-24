@@ -2,7 +2,6 @@
 * Elisa JS version 0.9
 * The Woodland Trust
 */
- 
 
 $(document).ready( function(){
     
@@ -11,6 +10,64 @@ $(document).ready( function(){
     // Set bounce rate timeout
     setTimeout("_gaq.push(['_trackEvent', 'Bounce Rate Timeout', '15 seconds'])", 15000);
     
+    // Count user registrations on woodlandtruts.org.uk
+    if(document.referrer.match(/registration.woodland-trust.org.uk/i) && $('#ctl00_welcomeMessage').length > 0 )
+    {
+	    console.log('registered');
+	    _gaq.push(['_trackEvent', 'Users', 'woodlandtruts.org.uk user registration']);
+    }
+    
+	// Count user registrations on woodlandtrustshop.com/register.aspx
+	if(  window.location.href.match(/woodlandtrustshop.com\/register.aspx/i) )
+    {   
+    	$('#ctl00_ctl00_cph1_cph1_ctrlCustomerRegister_CreateUserForm').bind('DOMNodeInserted', function(objEvent) 
+    	{
+    		if ($('#ctl00_ctl00_cph1_cph1_ctrlCustomerRegister_CreateUserForm_CompleteStepContainer_lblCompleteStep').length > 0)
+    		{
+	    		console.log('registered shop');
+	    		_gaq.push(['_trackEvent', 'Users', 'woodlandtrustshop.com user registration']);
+	    	}
+	    });
+    }
+    
+    // Search results on visitwoods.org.uk
+    if(  window.location.href.match(/visitwoods.org.uk\/en\/visit-woods\/pages\/search-result.aspx/i) )
+    {	
+    	text = $('#tableResults .search-info').text();
+    	if(text.match(/Your search did not return any results|Your search returned 0 woods/))
+    		result = '0';
+    	else
+    		result = text.match(/[0-9]+/).toString();
+    		
+	    _gaq.push(['_trackEvent', 'Visit Woods: Search', $('#ctl00_ctl21_searchText').val(), result]);
+    }
+    
+    // Visit Woods - upload image
+    $('.image-metadata-panel input[name="saveImages"]').click(function(e)
+    {
+        text = $('.image-metadata-panel h2').text();
+	    text = text.slice(text.indexOf('to ')+3,text.indexOf(',')).toString();
+        _gaq.push(['_trackEvent', 'Visit Woods', 'Upload Image', text]);
+    });
+
+    // Visit Woods - post a comment
+    $('.div-visit-woods-add-comment-panel-container input[title="Post your comment"]').click(function(e)
+    {
+        text = $('.div-visit-woods-add-comment-panel-container h2').text();
+	    text = text.slice(text.indexOf('to ')+3,text.indexOf(',')).toString();
+        _gaq.push(['_trackEvent', 'Visit Woods', 'Post Comment', text]);
+    });
+
+
+    // Visit Woods - upload video
+    $('.div-visit-woods-upload-video-panel-container input[title="Upload a video"]').click(function(e)
+    {
+        text = $('.div-visit-woods-upload-video-panel-container h2').text();
+	    text = text.slice(text.indexOf('to ')+3,text.indexOf(',')).toString();
+        _gaq.push(['_trackEvent', 'Visit Woods', 'Upload Video', text]);
+    });
+    
+      
 });
 
 (function($){
@@ -26,7 +83,7 @@ $(document).ready( function(){
                 trackSocial:      		true,
                 trackCrossDomains:      true,
                 
-                regexInternalTraffic:   new RegExp(window.location.host, 'i'),                                
+                regexInternalTraffic:   new RegExp(window.location.hostname, 'i'),                                
                 regexFileTypes:         /^.+\.(doc|docx|xls|xlsx|ppt|pptx|zip|pdf)$/i, 
                 regexCrossDomains:  /ancient-tree-hunt\.org\.uk|backonthemap\.org\.uk|british-trees\.com|dedicatetrees\.com|naturedetectives\.org\.uk|naturescalendar\.org\.uk|visitwoods\.org\.uk|woodlandtrust\.org\.uk|woodlandtrustshop\.com|wt-store\.com|woodland-trust\.org\.uk/i,
                 
