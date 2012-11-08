@@ -81,7 +81,7 @@ $(document).ready( function(){
                 
                 regexInternalTraffic:   new RegExp(window.location.hostname, 'i'),                                
                 regexFileTypes:         /^.+\.(doc|docx|xls|xlsx|ppt|pptx|zip|pdf)$/i, 
-                regexCrossDomains:  /ancient-tree-hunt\.org\.uk|backonthemap\.org\.uk|british-trees\.com|dedicatetrees\.com|naturedetectives\.org\.uk|naturescalendar\.org\.uk|visitwoods\.org\.uk|woodlandtrust\.org\.uk|woodlandtrustshop\.com|wt-store\.com|woodland-trust\.org\.uk/i,
+                regexCrossDomains:  /ancient-tree-hunt\.org\.uk|backonthemap\.org\.uk|british-trees\.com|dedicatetrees\.com|naturedetectives\.org\.uk|naturescalendar\.org\.uk|visitwoods\.org\.uk|woodlandtrust\.org\.uk|woodlandtrustshop\.com|wt-store\.com|woodland-trust\.org\.uk|treedisease\.co\.uk/i,
                 
                 prefixFileDownload: 	'File Download',
                 prefixExitLink:     	'Exit Links',
